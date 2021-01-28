@@ -2,6 +2,10 @@ import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Navbar from './Components/Navbar'
 import Home from './Components/Home'
+import SignUp from './Components/SignUp';
+import firebase from 'firebase';
+
+
 
 function App() {
   return (
@@ -10,6 +14,7 @@ function App() {
         <Router>
             <Navbar />
             <Route path = "/" component = {Home} />
+            <Route path = "/signin" component = {SignUp} />
         </Router>
       </div>
     </div>

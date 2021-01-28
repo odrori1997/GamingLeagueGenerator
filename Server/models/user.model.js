@@ -16,7 +16,6 @@ const userSchema = new Schema({
         min: 18,
         max: 65
     },
-    
 },
     {
         timestamps: true

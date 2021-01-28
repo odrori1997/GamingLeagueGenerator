@@ -23,9 +23,7 @@ export default class Home extends Component {
     render() {
         return (
             <div className="bg-light">
-                <h1 className="display-1">Hi I'm Omer, and this is my Gaming League Generator. Sign up below to pair up with people your age and in your location!</h1>
-                <input type="submit" className="btn-primary rounded" onClick={this.SignIn} value="Sign In" />
-                <input type="submit" className="btn-primary rounded" onClick={this.SignUp} value="Sign Up" />
+                <h1 className="display-1">Hi I'm Omer, and this is my Gaming League Generator. Sign up to pair up with people your age and in your location!</h1>
             </div>
         )
     }

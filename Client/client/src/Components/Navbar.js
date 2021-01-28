@@ -6,6 +6,7 @@ export default class Navbar extends Component {
         return (
             <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
                 <Link to="/" className="navbar-brand">Home</Link>
+                <Link to="/signin" className="navbar-brand">Sign In</Link>
             </nav>
         )
     }
