@@ -30,7 +30,7 @@ function SignUp() {
         handleClose();
         console.log(firebase.auth().currentUser);
         return (
-          <Home user={firebase.auth().currentUser} signedIn={true} />
+          <Redirect to="/home" />
         )
       }
     }

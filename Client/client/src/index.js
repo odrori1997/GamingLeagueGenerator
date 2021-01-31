@@ -5,13 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "firebase/auth";
 import firebase from 'firebase';
+import UserProvider from './Providers/UserProvider';
+
 
 
 
 ReactDOM.render(
-  
-    <App />
-  ,
+  <App />,
   document.getElementById('root')
 );
 
