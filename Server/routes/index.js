@@ -7,54 +7,37 @@ const Event = require('../models/event.model');
 var express = require('express');
 var router = express.Router();
 
-
-// // Configure Firebase.
-// const firebaseConfig = {
-//   apiKey: process.env.FIREBASE_API_KEY,
-//   authDomain: "gaming-league-20cee.firebaseapp.com",
-//   projectId: "gaming-league-20cee",
-//   storageBucket: "gaming-league-20cee.appspot.com",
-//   messagingSenderId: "308852548797",
-//   appId: "1:308852548797:web:2e0fb0ff89d4291c07c3d4",
-//   measurementId: "G-6DVXN4445B"
-// };
-// console.log(process.env.FIREBASE_API_KEY);
-// firebase.initializeApp(firebaseConfig);
-
-// router.use(function(req, res, next) {
-//   console.log("Setting CORS headers in server.");
-//   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
 /* GET home page with calendar events. */
-router.get('/events', function(req, res, next) {
+router.get('/events/:location/:age', function(req, res, next) {
+  console.log("In getEvents()", req.params);
     let location = req.params.location;
     let age = req.params.age;
-    // if (location && age) {
-    //   Events.find({age: age, location: location})
-    //   .then((events) => res.json(events))
-    //   .catch((err) => res.status(400).json("Error: " + err + "."));
-    // }
+    if (location && age) {
+      Event.find({ageMin: { $lt: age }, ageMax: { $gt: age }, location: location})
+      .then((events) => res.status(200).json(events))
+      .catch((err) => res.status(400).json("Error: " + err + "."));
+    }
 });
 
 /* GET User info when user logs in. */
-router.get('/', (req, res, next) => {
-  let user = firebase.auth().currentUser;
-  if (user) {
-    User.find({uuid: user.uuid})
-    .then((userInfo) => res.json(userInfo))
-    .catch((err) => res.status(500).json("Error: " + err + "."));
-  }
-  else {
-    res.json("User not logged in.");
-  }
+router.get('/home', (req, res, next) => {
+  console.log("Entered home()");
+
+  User.find()
+  .then((users) => {res.status(200); console.log("MongoDB response:", users); res.json(users); })
+  .catch((err) => res.status(500).json("Error: " + err + "."));
 
 });
 
+/* GET specific info on one user. */
+router.get('/user/:id', (req, res, next) => {
+  console.log("Entered getUserInfo()");
+  const uuid = req.params.id;
+  User.find({uuid: uuid}).then((user) => res.status(200).json(user)).catch((err) => res.status(500).json("Error:" + err + "."));
+})
+
 /* POST User age + location. */
-router.post('/', (req, res, next) => {
+router.post('/addUser', (req, res, next) => {
   console.log("Entered createUser()", req.body);
   let uuid = req.body.uuid;
   let location = req.body.location;
@@ -70,14 +53,49 @@ router.post('/', (req, res, next) => {
 
   newUser.save()
     .then(() => res.status(200).json("User successfully added."))
-    .catch(err => res.status(500).json("Error: " + err + "."));
+    .catch(err => res.json("Error: " + err + "."));
 });
 
 /* POST User registering for an event. */
-router.post('/events', (req, res, next) => {
+router.post('/events', async (req, res, next) => {
+  console.log("Entered registUserForEvent()");
   let eventID = req.body.eventID;
-  let userID = req.body.userID;
+  let user = req.body.user;
+  let event = await Event.findOne({"eventID": eventID});
+  let participants = event.participants.push(user);
+  console.log("Event:", event);
+  console.log("Participants:", participants);
+  console.log("User:", user);
+  Event.updateOne(
+    { "eventID": eventID },
+    { "participants": participants }
+  )
 });
+
+/* POST User hosting an event. */
+router.post('/events/create', (req, res, next) => {
+  let eventID = req.body.eventID;
+  let eventName = req.body.eventName;
+  let date = req.body.date;
+  let ageMin = req.body.ageMin;
+  let ageMax = req.body.ageMax;
+  let location = req.body.location;
+  let participants = [];
+  let hostID = req.body.hostID;
+  const newEvent = new Event({
+    eventName: eventName,
+    date: date,
+    ageMin: ageMin,
+    ageMax: ageMax,
+    location: location,
+    participants: participants,
+    hostID: hostID
+  });
+
+  newEvent.save()
+    .then(() => res.status(200).json("Event successfully added."))
+    .catch(err => res.json("Error: " + err + "."));
+})
 
 
 module.exports = router;

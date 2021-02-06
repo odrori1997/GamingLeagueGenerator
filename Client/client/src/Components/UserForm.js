@@ -9,7 +9,7 @@ export default class UserForm extends Component {
         this.state = {
             userInfo: this.props.userInfo,
             age: 18,
-            location: 0
+            location: "Not Created"
         }
         console.log("Entered UserForm component");
 
@@ -32,7 +32,7 @@ export default class UserForm extends Component {
 
         console.log("Passing the following userInfo to server.", User);
         
-        const env = process.env.ENVIRONMENT || "http://localhost:3000/";
+        const env = process.env.ENVIRONMENT || "http://localhost:3000/addUser";
         axios({
             method: 'post',
             url: env, 
@@ -47,6 +47,7 @@ export default class UserForm extends Component {
             })
             .catch(err => console.log("Error: ", err));
 
+        // window.location = '/';
     }
 
     onChangeAge(e) {
@@ -69,6 +70,7 @@ export default class UserForm extends Component {
                         <label htmlFor="age">Age</label>
                         <select 
                             required
+                            id="age"
                             className="form-control"
                             value={this.state.age}
                             onChange={this.onChangeAge}
@@ -97,6 +99,35 @@ export default class UserForm extends Component {
                                 <option 
                                     key={25}
                                     value={25}>25</option>
+                            </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="location">Location</label>
+                        <select 
+                            required
+                            id="location"
+                            className="form-control"
+                            value={this.state.location}
+                            onChange={this.onChangeLocation}
+                            >
+                                <option 
+                                    key={0}
+                                    value={"New York City"}>New York City</option>
+                                <option 
+                                    key={1}
+                                    value={"Philadelphia"}>Philadelphia</option>
+                                <option 
+                                    key={2}
+                                    value={"Boston"}>Boston</option>
+                                <option 
+                                    key={3}
+                                    value={"Jersey City"}>Jersey City</option>
+                                <option 
+                                    key={4}
+                                    value={"Hoboken"}>Hoboken</option>
+                                <option 
+                                    key={5}
+                                    value={"Other"}>Other</option>
                             </select>
                     </div>
                     <div className="form-group">

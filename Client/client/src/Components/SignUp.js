@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
 import Modal from 'react-bootstrap/Modal';
 import { Redirect } from 'react-router-dom';
 import Home from './Home';
+import UserContext from '../Providers/UserProvider';
 
 function SignUp() {
   
   const [show, setShow] = useState(true);
 
   const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
+  
+
+  const user = useContext(UserContext);
 
   // Configure FirebaseUI.
   const uiConfig = {
@@ -35,7 +38,15 @@ function SignUp() {
       }
     }
  };
-
+  // if user is logged in, then log them out
+  // if (user) {
+  //   firebase.auth().signOut();
+  //   return (
+  //     <div>
+  //       <Redirect to="/home" />
+  //     </div>
+  //   )
+  // }
   return (
     <div>
         <Modal show={show} onHide={handleClose}>

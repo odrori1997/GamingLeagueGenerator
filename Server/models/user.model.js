@@ -6,13 +6,13 @@ const userSchema = new Schema({
     displayName: {
         type: String,
         required: true,
-        unique: true,
         trim: true,
         minlength: 3
     },
     uuid: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     age: {
         type: Number,
@@ -21,9 +21,12 @@ const userSchema = new Schema({
         max: 65
     },
     location: {
-        type: Number,
+        type: String,
         required: true,
-        max: 5
+    },
+    email: {
+        type: String,
+        required: true
     }
 },
     {
