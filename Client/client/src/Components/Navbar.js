@@ -3,7 +3,8 @@ import { Link }  from 'react-router-dom'
 
 export default class Navbar extends Component {
     render() {
-        const SignInText = this.props.user ? "Log Out" : "Log In";
+        const LoggedIn = this.props.user && this.props.user.uid;
+        const SignInText = LoggedIn ? "Log Out" : "Log In";
         return (
             <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
                 <Link to="/" className="navbar-brand">Home</Link>

@@ -7,13 +7,15 @@ import Home from './Home';
 import UserContext from '../Providers/UserProvider';
 
 function SignUp() {
-  
   const [show, setShow] = useState(true);
 
   const handleClose = () => setShow(false);
   
 
-  const user = useContext(UserContext);
+  const UC = useContext(UserContext);
+  const user = UC.user;
+  const setUser = UC.setUser;
+  console.log("Entered SignUp component as ", user);
 
   // Configure FirebaseUI.
   const uiConfig = {
@@ -32,21 +34,24 @@ function SignUp() {
         console.log("Successfully signed in...");
         handleClose();
         console.log(firebase.auth().currentUser);
-        return (
-          <Redirect to="/home" />
-        )
+        // return (
+        //   <Redirect to="/home" />
+        // )
+        window.location = "/";
       }
     }
  };
   // if user is logged in, then log them out
-  // if (user) {
-  //   firebase.auth().signOut();
-  //   return (
-  //     <div>
-  //       <Redirect to="/home" />
-  //     </div>
-  //   )
-  // }
+  if (user && user.uid) {
+    console.log("Entered SignUp.js, user is logged in so logging them out.", user);
+    firebase.auth().signOut();
+    setUser(null);
+    return (
+      <div>
+        <Redirect to="/" />
+      </div>
+    )
+  }
   return (
     <div>
         <Modal show={show} onHide={handleClose}>

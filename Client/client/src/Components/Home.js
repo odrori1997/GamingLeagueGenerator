@@ -7,7 +7,9 @@ const axios = require('axios');
 
 function Home() {
     console.log("Entered Home componenet");
-    const user = useContext(UserContext);
+    const ucInstance = useContext(UserContext);
+    const user = ucInstance.user;
+    const LoggedIn = user && user.uid;
     console.log("Current user: ",user);
     const env = process.env.ENVIRONMENT || "http://localhost:3000/";
     let url = env + 'home'
@@ -21,7 +23,7 @@ function Home() {
     console.log("MongoDb response", users);
     
     /* Page shown to existing user. */
-    if (user && user.location != "Not Created") {
+    if (LoggedIn && user.location != "Not Created") {
         // TODO
         // show events here
         return (
@@ -32,12 +34,16 @@ function Home() {
         )
     }
     /* First-time user, create profile page. */
-    else if (user && user.location == "Not Created") {
+    else if (LoggedIn && user.location == "Not Created") {
         return (
-            <div>
-                <h1>Please fill out the form below to complete your profile.</h1>
-                <UserForm userInfo={user} />
-            </div>
+            <UserContext.Consumer>
+                {({user, setUser}) => (
+                    <div>
+                        <h1>Please fill out the form below to complete your profile.</h1>
+                    <UserForm userInfo={user} setUser={setUser} />
+                </div>
+                )}
+            </UserContext.Consumer>
         )
     }
     /* Guest homepage. */
