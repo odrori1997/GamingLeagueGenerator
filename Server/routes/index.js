@@ -23,7 +23,7 @@ router.get('/events/:location/:age', function(req, res, next) {
 router.get('/home', (req, res, next) => {
   console.log("Entered home()");
 
-  User.find()
+  User.find({})
   .then((users) => {res.status(200); console.log("MongoDB response:", users); res.json(users); })
   .catch((err) => res.status(500).json("Error: " + err + "."));
 
@@ -32,20 +32,21 @@ router.get('/home', (req, res, next) => {
 /* GET specific info on one user. */
 router.get('/user/:id', (req, res, next) => {
   console.log("Entered getUserInfo()");
-  const uuid = req.params.id;
-  User.find({uuid: uuid}).then((user) => res.status(200).json(user)).catch((err) => res.status(500).json("Error:" + err + "."));
+  const uid = req.params.id;
+  User.find({uid: uid}).then((user) => res.status(200).json(user)).catch((err) => res.status(500).json("Error:" + err + "."));
 })
 
 /* POST User age + location. */
-router.post('/addUser', (req, res, next) => {
+router.post('/addUser', async (req, res, next) => {
+  // User.remove({}, () => {console.log("successfully removed")});
   console.log("Entered createUser()", req.body);
-  let uuid = req.body.uuid;
+  let uid = req.body.uid;
   let location = req.body.location;
   let age = req.body.age;
   let displayName = req.body.displayName;
 
   const newUser = new User({
-    uuid: uuid,
+    uid: uid,
     location: location,
     age: age,
     displayName: displayName
@@ -58,7 +59,7 @@ router.post('/addUser', (req, res, next) => {
 
 /* POST User registering for an event. */
 router.post('/events', async (req, res, next) => {
-  console.log("Entered registUserForEvent()");
+  console.log("Entered registerUserForEvent()");
   let eventID = req.body.eventID;
   let user = req.body.user;
   let event = await Event.findOne({"eventID": eventID});
@@ -74,7 +75,8 @@ router.post('/events', async (req, res, next) => {
 
 /* POST User hosting an event. */
 router.post('/events/create', (req, res, next) => {
-  let eventID = req.body.eventID;
+  console.log("Entered createEvent()", req.body);
+  // let eventID = req.body.eventID;
   let eventName = req.body.eventName;
   let date = req.body.date;
   let ageMin = req.body.ageMin;

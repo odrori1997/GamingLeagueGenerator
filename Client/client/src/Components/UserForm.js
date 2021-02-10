@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { logInFromServer } from '../App';
 
 require('dotenv').config();
 const axios = require('axios');
@@ -8,10 +9,11 @@ export default class UserForm extends Component {
         super(props);
         this.state = {
             userInfo: this.props.userInfo,
+            setUser: this.props.setUser,
             age: 18,
             location: "Not Created"
         }
-        console.log("Entered UserForm component");
+        console.log("Entered UserForm component", this.state);
 
         this.onSubmit = this.onSubmit.bind(this);
         this.onChangeAge = this.onChangeAge.bind(this);
@@ -24,7 +26,7 @@ export default class UserForm extends Component {
         console.log("Entered onSubmit().");
 
         const User = {
-            uuid: this.state.userInfo.uid,
+            uid: this.state.userInfo.uid,
             displayName: this.state.userInfo.displayName,
             age: parseInt(this.state.age),
             location: this.state.location
@@ -47,19 +49,25 @@ export default class UserForm extends Component {
             })
             .catch(err => console.log("Error: ", err));
 
+        // logInFromServer();
+        console.log("this.state.setUser: ", this.state.setUser);
+        console.log("this.state:", this.state);
+        this.state.setUser(User);
         // window.location = '/';
     }
 
     onChangeAge(e) {
+        console.log("Entered onChangeAge", e.target.value);
         this.setState({
             age: e.target.value
-        })
+        });
     }
 
     onChangeLocation(e) {
+        console.log("Entered onChangeLocation", e.target.value);
         this.setState({
             location: e.target.value
-        })
+        });
     }
 
     render() {
