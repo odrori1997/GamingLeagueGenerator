@@ -24,25 +24,6 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 const axios = require('axios');
 
-export const logInFromServer = async () => {
-  const user = auth.currentUser;
-  const env = process.env.ENVIRONMENT || "http://localhost:3000/";
-  const userID = user ? createUniqueID(user.uid) : null;
-  const url = user && userID ? env + "user/" + userID : env;
-  console.log("Hitting this URL to retrieve userInfo", url);
-  axios({
-      method: 'get',
-      url: url 
-  })
-      .then(res => {
-        console.log("Server response to get Userinfo: ", res);
-        const userResponse = (res.data && res.data[0]) ? res.data[0] : {displayName: user.displayName, uid: userID, location: "Not Created", age: 18};
-        console.log("Setting user state to", userResponse);
-        this.setState({user: userResponse})
-      })
-      .catch(err => console.log("Error: ", err));
-}
-
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -72,7 +53,7 @@ export default class App extends Component {
           })
               .then(res => {
                 console.log("Server response to get Userinfo: ", res);
-                const userResponse = (res.data && res.data[0]) ? res.data[0] : {displayName: user.displayName, uid: userID, location: "Not Created", age: 18};
+                const userResponse = (res.data && res.data[0]) ? res.data[0] : {displayName: user.displayName, uid: userID, email: user.email, location: "Not Created", age: 18};
                 console.log("Setting user state to", userResponse);
                 this.setState({user: userResponse})
               })

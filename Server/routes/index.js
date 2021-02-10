@@ -13,9 +13,16 @@ router.get('/events/:location/:age', function(req, res, next) {
     let location = req.params.location;
     let age = req.params.age;
     if (location && age) {
-      Event.find({ageMin: { $lt: age }, ageMax: { $gt: age }, location: location})
-      .then((events) => res.status(200).json(events))
-      .catch((err) => res.status(400).json("Error: " + err + "."));
+      console.log("Creating MongoDB Events query");
+      // MongoDB Query parameters: { ageMin: { $lt: age }, ageMax: { $gt: age },location: location }
+      Event.find({}, function(err, docs) {
+        if (err) {
+          console.log("Error:", err);
+          return;
+        }
+        console.log("Result of MongoDB Events Query:", docs);
+        res.json(docs);
+      });
     }
 });
 
@@ -37,24 +44,30 @@ router.get('/user/:id', (req, res, next) => {
 })
 
 /* POST User age + location. */
-router.post('/addUser', async (req, res, next) => {
-  // User.remove({}, () => {console.log("successfully removed")});
+router.post('/addUser', (req, res, next) => {
+
   console.log("Entered createUser()", req.body);
+  let email = req.body.email;
   let uid = req.body.uid;
   let location = req.body.location;
   let age = req.body.age;
   let displayName = req.body.displayName;
 
   const newUser = new User({
+    displayName: displayName,
     uid: uid,
+    email: email,
     location: location,
     age: age,
-    displayName: displayName
   });
 
-  newUser.save()
-    .then(() => res.status(200).json("User successfully added."))
-    .catch(err => res.json("Error: " + err + "."));
+  newUser.save(function(err) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    res.json("User successfully added.");
+  });
 });
 
 /* POST User registering for an event. */

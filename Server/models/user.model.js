@@ -26,12 +26,19 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     }
 },
     {
         timestamps: true
-    });
+    },
+    // in production, set this to false
+    // {
+    //     autoCreate: true
+    // }
+    
+    );
 
 
 

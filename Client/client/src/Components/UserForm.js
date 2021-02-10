@@ -28,6 +28,7 @@ export default class UserForm extends Component {
         const User = {
             uid: this.state.userInfo.uid,
             displayName: this.state.userInfo.displayName,
+            email: this.state.userInfo.email,
             age: parseInt(this.state.age),
             location: this.state.location
         };
@@ -49,9 +50,8 @@ export default class UserForm extends Component {
             })
             .catch(err => console.log("Error: ", err));
 
-        // logInFromServer();
-        console.log("this.state.setUser: ", this.state.setUser);
-        console.log("this.state:", this.state);
+        // console.log("this.state.setUser: ", this.state.setUser);
+        // console.log("this.state:", this.state);
         this.state.setUser(User);
         // window.location = '/';
     }
