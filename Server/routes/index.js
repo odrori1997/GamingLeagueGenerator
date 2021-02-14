@@ -1,5 +1,6 @@
 const firebase = require('firebase');
 var cors = require('cors');
+const mongoose = require('mongoose');
 
 const User = require('../models/user.model');
 const Event = require('../models/event.model');
@@ -14,8 +15,7 @@ router.get('/events/:location/:age', function(req, res, next) {
     let age = req.params.age;
     if (location && age) {
       console.log("Creating MongoDB Events query");
-      // MongoDB Query parameters: { ageMin: { $lt: age }, ageMax: { $gt: age },location: location }
-      Event.find({}, function(err, docs) {
+      Event.find({ageMin: { $lt: age }, ageMax: { $gt: age }, location: location}, function(err, docs) {
         if (err) {
           console.log("Error:", err);
           return;
@@ -75,15 +75,52 @@ router.post('/events', async (req, res, next) => {
   console.log("Entered registerUserForEvent()");
   let eventID = req.body.eventID;
   let user = req.body.user;
-  let event = await Event.findOne({"eventID": eventID});
-  let participants = event.participants.push(user);
-  console.log("Event:", event);
-  console.log("Participants:", participants);
+
+  if (!eventID) {
+    console.error("Invalid eventID.");
+    return;
+  }
+  if (!user) {
+    console.error("Invalid userID.");
+    return;
+  }
+
+  // user = user.uid; // convert string to mongoose objectID
+  eventID = mongoose.Types.ObjectId(eventID);
+
+  // let event = await Event.findOne({"_id": eventID});
+  // let participants = event.participants.push(user);
+
+  // console.log("Event:", event);
+  // console.log("Participants:", participants);
   console.log("User:", user);
-  Event.updateOne(
-    { "eventID": eventID },
-    { "participants": participants }
-  )
+
+  let event = await Event.findById(eventID);
+
+  if (event.participants.includes(user)) {
+    console.log("User already registered.");
+    return;
+  }
+
+  Event.findByIdAndUpdate(eventID, 
+    { "$push": {"participants": user}},
+    function(err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.json("User successfully registered.");
+    })
+  // Event.updateOne(
+  //   { "eventID": eventID },
+  //   { "participants": participants }
+  // , function(err) {
+  //   if (err) {
+  //     console.log(err);
+  //     return;
+  //   }
+  //   res.json("User successfully registered.");
+  // });
 });
 
 /* POST User hosting an event. */

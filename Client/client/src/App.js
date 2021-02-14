@@ -1,3 +1,14 @@
+// TODO DEV:
+// -edit event registration functionality
+// -add delete user feature
+// -add edit profile feature
+// -style event tiles and website
+// -add image hosting for events
+
+
+
+
+
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
@@ -8,6 +19,7 @@ import firebase from 'firebase';
 import React, { Component, createContext} from 'react';
 import UserContext from './Providers/UserProvider';
 import { createUniqueID } from './helper';
+import EventDetails from './Components/EventDetails';
 
 // Configure Firebase.
 const firebaseConfig = {
@@ -80,6 +92,7 @@ export default class App extends Component {
               <Route path = "/login" component = {SignUp} />
               {/* <Route path = "/logout" component = {LogOut} /> */}
               <Route path="/createEvent" component = {EventForm} />
+              <Route path="/event/details" component = {EventDetails} />
             </UserContext.Provider>
           </Router>
         </div>
