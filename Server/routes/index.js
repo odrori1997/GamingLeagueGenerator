@@ -43,8 +43,8 @@ router.get('/user/:id', (req, res, next) => {
   User.find({uid: uid}).then((user) => res.status(200).json(user)).catch((err) => res.status(500).json("Error:" + err + "."));
 })
 
-/* POST User age + location. */
-router.post('/addUser', (req, res, next) => {
+/* POST User age + location. If user already exists, update with new info. */
+router.post('/addUser', async (req, res, next) => {
 
   console.log("Entered createUser()", req.body);
   let email = req.body.email;
@@ -53,20 +53,53 @@ router.post('/addUser', (req, res, next) => {
   let age = req.body.age;
   let displayName = req.body.displayName;
 
-  const newUser = new User({
-    displayName: displayName,
-    uid: uid,
-    email: email,
-    location: location,
-    age: age,
-  });
+  let userExists = await User.findOne({ uid: uid });
 
-  newUser.save(function(err) {
+  if (userExists) {
+    userExists.email = email;
+    userExists.location = location;
+    userExists.age = age;
+    userExists.displayName = displayName;
+
+    userExists.save((err) => {
+      if (err) {
+        console.error("Error updating User: ", err);
+      }
+    });
+    
+  }
+  else {
+    const newUser = new User({
+      displayName: displayName,
+      uid: uid,
+      email: email,
+      location: location,
+      age: age,
+    });
+  
+    newUser.save(function(err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+    });
+  }
+    res.json("User successfully added.");
+});
+
+/* DELETE User. */
+router.delete('/deleteUser', (req, res, next) => {
+
+  console.log("Entered deleteUser()", req.body);
+  
+  let uid = req.body.uid;
+
+  User.deleteOne({ uid: uid }, function(err) {
     if (err) {
       console.log(err);
       return;
     }
-    res.json("User successfully added.");
+    res.json("User successfully deleted.");
   });
 });
 
@@ -111,16 +144,6 @@ router.post('/events', async (req, res, next) => {
       }
       res.json("User successfully registered.");
     })
-  // Event.updateOne(
-  //   { "eventID": eventID },
-  //   { "participants": participants }
-  // , function(err) {
-  //   if (err) {
-  //     console.log(err);
-  //     return;
-  //   }
-  //   res.json("User successfully registered.");
-  // });
 });
 
 /* POST User hosting an event. */
@@ -134,6 +157,8 @@ router.post('/events/create', (req, res, next) => {
   let location = req.body.location;
   let participants = [];
   let hostID = req.body.hostID;
+  let hostName = req.body.hostName;
+
   const newEvent = new Event({
     eventName: eventName,
     date: date,
@@ -141,12 +166,78 @@ router.post('/events/create', (req, res, next) => {
     ageMax: ageMax,
     location: location,
     participants: participants,
-    hostID: hostID
+    hostID: hostID,
+    hostName: hostName
   });
 
   newEvent.save()
     .then(() => res.status(200).json("Event successfully added."))
     .catch(err => res.json("Error: " + err + "."));
+})
+
+/* POST updating an event. */
+router.post('/event/update', (req, res, next) => {
+  console.log("Entered updateEvent()", req.body);
+  let eventID = req.body.eventID;
+  let eventName = req.body.eventName;
+  let date = req.body.date;
+  let ageMin = req.body.ageMin;
+  let ageMax = req.body.ageMax;
+  let location = req.body.location;
+  let participants = req.body.participants;
+  Event.findByIdAndUpdate(eventID, 
+    { 
+      eventName: eventName,
+      date: date,
+      ageMin: ageMin,
+      ageMax: ageMax,
+      location: location,
+      participants: participants,
+    })
+    .then(() => res.status(200).json("Successfully updated event."))
+    .catch(err => res.json("Error: ", err));
+})
+
+/* GET all events a user is registered for. */
+router.get('/user/events/:id', async (req, res, next) => {
+  console.log("Entered getUserEvents()", req.params);
+  let userID = req.params.id;
+  let events = await Event.find({ participants: userID }, (err) => {
+    if (err) {
+      console.error("Error returning events for given user ID", err);
+      return;
+    }
+  });
+
+  res.json(events);
+})
+
+
+/* GET all events a user is hosting. */
+router.get('/user/events/host/:id', async (req, res, next) => {
+  console.log("Entered getUserHostEvents()", req.params);
+  let userID = req.params.id;
+  let events = await Event.find({ hostID: userID }, (err, docs) => {
+    if (err) {
+      console.error("Error returning events for given host ID", err);
+      return;
+    }
+    console.log("Result of MongoDB Events Query:", docs);
+  });
+
+  res.json(events);
+})
+
+/* DELETE an event. */
+router.delete('/event/delete/:id', (req, res, next) => {
+  console.log("Entered deleteEvent()", req.params);
+  let eventID = req.params.id;
+  Event.findByIdAndDelete(eventID, err => {
+    if (err) {
+      console.error("Error: ", err);
+    }
+    res.json("Successfully deleted event.");
+  })
 })
 
 

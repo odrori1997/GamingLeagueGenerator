@@ -53,6 +53,9 @@ export default class UserForm extends Component {
         // console.log("this.state.setUser: ", this.state.setUser);
         // console.log("this.state:", this.state);
         this.state.setUser(User);
+        if (this.props.setEdit) {
+            this.props.setEdit(false);
+        }
         // window.location = '/';
     }
 
@@ -139,7 +142,7 @@ export default class UserForm extends Component {
                             </select>
                     </div>
                     <div className="form-group">
-                        <input type="submit" value="Create User" className="btn btn-primary" />
+                        <input type="submit" value="Submit" className="btn btn-primary" />
                     </div>
                 </form>
             </div>

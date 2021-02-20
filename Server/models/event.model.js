@@ -37,6 +37,10 @@ const eventSchema = new Schema({
     hostID: {
         type: String,
         required: true    
+    },
+    hostName: {
+        type: String,
+        required: true
     }
 },
     {
