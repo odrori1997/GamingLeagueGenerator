@@ -28,6 +28,7 @@ export default class UserForm extends Component {
         const User = {
             uid: this.state.userInfo.uid,
             displayName: this.state.userInfo.displayName,
+            email: this.state.userInfo.email,
             age: parseInt(this.state.age),
             location: this.state.location
         };
@@ -49,10 +50,12 @@ export default class UserForm extends Component {
             })
             .catch(err => console.log("Error: ", err));
 
-        // logInFromServer();
-        console.log("this.state.setUser: ", this.state.setUser);
-        console.log("this.state:", this.state);
+        // console.log("this.state.setUser: ", this.state.setUser);
+        // console.log("this.state:", this.state);
         this.state.setUser(User);
+        if (this.props.setEdit) {
+            this.props.setEdit(false);
+        }
         // window.location = '/';
     }
 
@@ -139,7 +142,7 @@ export default class UserForm extends Component {
                             </select>
                     </div>
                     <div className="form-group">
-                        <input type="submit" value="Create User" className="btn btn-primary" />
+                        <input type="submit" value="Submit" className="btn btn-primary" />
                     </div>
                 </form>
             </div>

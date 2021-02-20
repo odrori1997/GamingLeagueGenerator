@@ -27,8 +27,7 @@ function Home() {
         // TODO
         // show events here
         return (
-            <div className="bg-light">
-                <h1 id="header" className="display-1">You're logged in as {user.displayName}.</h1>
+            <div className="">
                 <Events user={user} />
             </div>
         )
@@ -49,7 +48,7 @@ function Home() {
     /* Guest homepage. */
     else {
         return (
-            <div className="bg-light">
+            <div className="">
                 <h1 id="header" className="display-1">Hi I'm Omer, and this is my Gaming League Generator. Sign in to pair up with people your age and in your location!</h1>
             </div>
         )

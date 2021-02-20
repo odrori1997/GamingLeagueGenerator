@@ -31,13 +31,16 @@ const eventSchema = new Schema({
         required: true,
     },
     participants: {
-        type: [mongoose.Types.ObjectId],
-        ref: 'User',
+        type: [String],
         required: false
     },
     hostID: {
         type: String,
         required: true    
+    },
+    hostName: {
+        type: String,
+        required: true
     }
 },
     {

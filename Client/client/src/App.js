@@ -1,3 +1,11 @@
+// TODO DEV:
+// -style event tiles and website
+// -add image hosting for events
+
+
+
+
+
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar';
@@ -8,6 +16,9 @@ import firebase from 'firebase';
 import React, { Component, createContext} from 'react';
 import UserContext from './Providers/UserProvider';
 import { createUniqueID } from './helper';
+import EventDetails from './Components/EventDetails';
+import UserProfile from './Components/UserProfile';
+import RegisteredEvents from './Components/RegisteredEvents';
 
 // Configure Firebase.
 const firebaseConfig = {
@@ -23,25 +34,6 @@ firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
 const axios = require('axios');
-
-export const logInFromServer = async () => {
-  const user = auth.currentUser;
-  const env = process.env.ENVIRONMENT || "http://localhost:3000/";
-  const userID = user ? createUniqueID(user.uid) : null;
-  const url = user && userID ? env + "user/" + userID : env;
-  console.log("Hitting this URL to retrieve userInfo", url);
-  axios({
-      method: 'get',
-      url: url 
-  })
-      .then(res => {
-        console.log("Server response to get Userinfo: ", res);
-        const userResponse = (res.data && res.data[0]) ? res.data[0] : {displayName: user.displayName, uid: userID, location: "Not Created", age: 18};
-        console.log("Setting user state to", userResponse);
-        this.setState({user: userResponse})
-      })
-      .catch(err => console.log("Error: ", err));
-}
 
 export default class App extends Component {
   constructor(props) {
@@ -72,7 +64,7 @@ export default class App extends Component {
           })
               .then(res => {
                 console.log("Server response to get Userinfo: ", res);
-                const userResponse = (res.data && res.data[0]) ? res.data[0] : {displayName: user.displayName, uid: userID, location: "Not Created", age: 18};
+                const userResponse = (res.data && res.data[0]) ? res.data[0] : {displayName: user.displayName, uid: userID, email: user.email, location: "Not Created", age: 18};
                 console.log("Setting user state to", userResponse);
                 this.setState({user: userResponse})
               })
@@ -97,8 +89,10 @@ export default class App extends Component {
             <Navbar user={this.state.user} />
               <Route path = "/" exact component = {Home} />
               <Route path = "/login" component = {SignUp} />
-              {/* <Route path = "/logout" component = {LogOut} /> */}
               <Route path="/createEvent" component = {EventForm} />
+              <Route path="/event/details" component = {EventDetails} />
+              <Route path="/user/profile" component = {UserProfile} />
+              <Route path="/user/events" component = {RegisteredEvents} />
             </UserContext.Provider>
           </Router>
         </div>
